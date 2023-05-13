@@ -3,10 +3,10 @@ import { IsNotEmpty } from 'class-validator';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'Ivan' })
-  @IsNotEmpty()
   readonly username: string;
 
   @ApiProperty({ example: 'ivan123' })
+  @IsNotEmpty()
   readonly password: string;
 
   @ApiProperty({ example: 'ivan@gmail.com' })
@@ -19,5 +19,4 @@ export class CreateUserDto {
 
   @ApiProperty({ example: 'улица Пушкина' })
   readonly address: string;
-  login: any;
 }

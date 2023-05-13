@@ -14,7 +14,7 @@ export class UserEntity {
   @Column({ unique: true })
   email: string;
 
-  @Column()
+  @Column({ default: null })
   username?: string;
 
   @Column()
@@ -23,7 +23,7 @@ export class UserEntity {
   @Column({ unique: true })
   phone: string;
 
-  @Column()
+  @Column({ default: null })
   address?: string;
 
   @CreateDateColumn()
