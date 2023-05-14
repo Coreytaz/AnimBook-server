@@ -33,7 +33,11 @@ export class UsersService {
     return this.repository.save(newUser);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    console.log(id, updateUserDto);
+    await this.repository.save({
+      id,
+      ...updateUserDto,
+    });
   }
 }
