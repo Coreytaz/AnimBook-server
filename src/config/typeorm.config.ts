@@ -1,5 +1,8 @@
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { CatergoriesEntity } from 'src/catergories/entities/catergories.entity';
+import { ProductEntity } from 'src/product/entities/product.entity';
+import { RatingEntity } from 'src/rating/entities/rating.entity';
 import { UserEntity } from 'src/users/entities/user.entity';
 
 export const getTypeormConfig = async (
@@ -12,5 +15,5 @@ export const getTypeormConfig = async (
   password: configService.get('DB-PASSWORD'),
   database: configService.get('DB-DATEBASE'),
   synchronize: true,
-  entities: [UserEntity],
+  entities: [UserEntity, CatergoriesEntity, ProductEntity, RatingEntity],
 });
