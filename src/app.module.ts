@@ -4,6 +4,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { getTypeormConfig } from './config/typeorm.config';
 import { AuthModule } from './auth/auth.module';
+import { CatergoriesModule } from './catergories/catergories.module';
+import { GenerateSlugModule } from './generate-slug/generate-slug.module';
+import { ProductModule } from './product/product.module';
+import { RatingModule } from './rating/rating.module';
 
 @Module({
   imports: [
@@ -15,6 +19,10 @@ import { AuthModule } from './auth/auth.module';
       inject: [ConfigService],
     }),
     AuthModule,
+    CatergoriesModule,
+    GenerateSlugModule,
+    ProductModule,
+    RatingModule,
   ],
   controllers: [],
   providers: [],
