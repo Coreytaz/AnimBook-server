@@ -1,4 +1,5 @@
 import { ProductEntity } from 'src/product/entities/product.entity';
+import { PublisherEntity } from 'src/publisher/entities/publisher.entity';
 import {
   Column,
   Entity,
@@ -34,6 +35,9 @@ export class CatergoriesEntity {
 
   @OneToMany(() => ProductEntity, (product) => product.category)
   products: ProductEntity[];
+
+  @OneToMany(() => PublisherEntity, (publisher) => publisher.category)
+  publisher: PublisherEntity[];
 
   @CreateDateColumn()
   created_at: Date;
