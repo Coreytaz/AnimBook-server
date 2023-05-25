@@ -23,7 +23,7 @@ export class RatingController {
     required: true,
     name: 'productId',
   })
-  async findSub(@Param('productId') productId: string) {
+  async find(@Param('productId') productId: string) {
     return this.ratingService.findByProductId(productId);
   }
 

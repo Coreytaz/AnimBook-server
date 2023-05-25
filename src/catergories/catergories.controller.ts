@@ -36,6 +36,17 @@ export class CatergoriesController {
     return this.CatergoriesService.findSub(slug);
   }
 
+  @Get('filters/:slug')
+  @HttpCode(HttpStatus.OK)
+  @ApiParam({
+    example: 'akrilovye-figurki',
+    required: true,
+    name: 'slug',
+  })
+  async getFilters(@Param('slug') slug: string) {
+    return this.CatergoriesService.getFilter(slug);
+  }
+
   @Post('/create')
   @ApiBody({ type: CreateCatergoriesDto })
   @HttpCode(HttpStatus.OK)

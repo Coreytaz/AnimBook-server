@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOperator, IsNull, ObjectId, Repository } from 'typeorm';
+import { FindOneOptions, FindOperator, IsNull, Repository } from 'typeorm';
 import { CatergoriesEntity } from './entities/catergories.entity';
 import {
   CreateCatergoriesDto,
@@ -21,10 +21,10 @@ export class CatergoriesService {
     this.categoryRepository.save(category);
   }
 
-  async findBy(filter: {
-    where: { _id?: string; slug?: string };
-  }): Promise<CatergoriesEntity> {
-    return await this.categoryRepository.findOne({ ...filter });
+  async findBy(
+    options: FindOneOptions<CatergoriesEntity>,
+  ): Promise<CatergoriesEntity> {
+    return await this.categoryRepository.findOne({ ...options });
   }
 
   async findAll(): Promise<CatergoriesEntity[]> {
@@ -44,6 +44,23 @@ export class CatergoriesService {
       categoryName: name || '',
       subcategories,
       products,
+    };
+  }
+
+  async getFilter(slug: string): Promise<any> {
+    const { products, publisher } = await this.categoryRepository.findOne({
+      where: { slug },
+      relations: ['products', 'publisher'],
+    });
+    const allPrice = products.map((item) => item.price);
+    const lowPriceAndMax = {
+      min: Math.min(...allPrice),
+      max: Math.max(...allPrice),
+    };
+
+    return {
+      publisher,
+      lowPriceAndMax,
     };
   }
 

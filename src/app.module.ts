@@ -8,6 +8,7 @@ import { CatergoriesModule } from './catergories/catergories.module';
 import { GenerateSlugModule } from './generate-slug/generate-slug.module';
 import { ProductModule } from './product/product.module';
 import { RatingModule } from './rating/rating.module';
+import { PublisherModule } from './publisher/publisher.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { RatingModule } from './rating/rating.module';
     GenerateSlugModule,
     ProductModule,
     RatingModule,
+    PublisherModule,
   ],
   controllers: [],
   providers: [],

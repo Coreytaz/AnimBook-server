@@ -1,4 +1,5 @@
 import { CatergoriesEntity } from 'src/catergories/entities/catergories.entity';
+import { PublisherEntity } from 'src/publisher/entities/publisher.entity';
 import { RatingEntity } from 'src/rating/entities/rating.entity';
 import {
   Column,
@@ -32,6 +33,9 @@ export class ProductEntity {
 
   @ManyToOne(() => CatergoriesEntity, (category) => category.products)
   category: CatergoriesEntity;
+
+  @ManyToOne(() => PublisherEntity, (publisher) => publisher.products)
+  publisher: PublisherEntity;
 
   @OneToMany(() => RatingEntity, (rating) => rating.product)
   rating: RatingEntity[];
