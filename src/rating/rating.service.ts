@@ -1,6 +1,6 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
 import { RatingEntity } from './entities/rating.entity';
 import { CreateRatingDto } from './dto/create-rating.dto';
 import { ProductService } from 'src/product/product.service';
@@ -15,14 +15,22 @@ export class RatingService {
     private userService: UsersService,
   ) {}
 
-  async findBy(filter: { where: { _id?: string } }): Promise<RatingEntity[]> {
-    return await this.ratingRepository.find({ ...filter });
+  async getRatingProduct(slug: string) {
+    const { rating } = await this.productService.findOne({
+      where: { slug },
+      relations: ['rating'],
+    });
+    const totalRating =
+      rating?.reduce((acc, cur) => acc + cur.rating, 0) / rating?.length || 0;
+    const countReviews = rating.length || 0;
+
+    return { rating, totalRating, countReviews };
   }
 
-  async findByProductId(productId: string): Promise<RatingEntity[]> {
-    return await this.ratingRepository.find({
-      where: { product: { _id: productId } },
-    });
+  async findBy(
+    options?: FindManyOptions<RatingEntity>,
+  ): Promise<RatingEntity[]> {
+    return await this.ratingRepository.find({ ...options });
   }
 
   async createReviews(userId: string, dto: CreateRatingDto) {
