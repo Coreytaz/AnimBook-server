@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Get,
   HttpCode,
   HttpStatus,
   Param,
@@ -17,18 +16,6 @@ export class DescriptionsProductController {
   constructor(
     private readonly descriptionsProductService: DescriptionsProductService,
   ) {}
-
-  @Get('/:slug')
-  @HttpCode(HttpStatus.OK)
-  @ApiParam({
-    required: true,
-    name: 'slug',
-    example:
-      'figurka-neca-teenage-mutant-ninja-turtles---michelangelo-1990-movie',
-  })
-  async getDescriptionProduct(@Param('slug') slug: string) {
-    return this.descriptionsProductService.getDescriptionProduct(slug);
-  }
 
   @Post('create/:productId')
   @HttpCode(HttpStatus.OK)

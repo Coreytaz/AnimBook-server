@@ -13,11 +13,8 @@ export class CreateProductDto {
   })
   readonly description: string;
 
-  @ApiProperty({
-    example:
-      'https://static.insales-cdn.com/images/products/1/1945/398264217/large_Figurka-Mikelandzhelo-_-Neca-Teenage-Mutant-Ninja-Turtles-Michelangelo.png',
-  })
-  readonly img: string;
+  @ApiProperty({ type: 'string', format: 'binary', required: true })
+  readonly img: Express.Multer.File;
 
   @ApiProperty({ example: 499 })
   readonly price: number;

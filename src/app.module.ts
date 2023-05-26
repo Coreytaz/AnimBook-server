@@ -10,6 +10,7 @@ import { ProductModule } from './product/product.module';
 import { RatingModule } from './rating/rating.module';
 import { PublisherModule } from './publisher/publisher.module';
 import { DescriptionsProductModule } from './descriptions-product/descriptions-product.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { DescriptionsProductModule } from './descriptions-product/descriptions-p
     RatingModule,
     PublisherModule,
     DescriptionsProductModule,
+    CloudinaryModule,
   ],
   controllers: [],
   providers: [],

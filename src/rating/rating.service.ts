@@ -15,18 +15,6 @@ export class RatingService {
     private userService: UsersService,
   ) {}
 
-  async getRatingProduct(slug: string) {
-    const { rating } = await this.productService.findOne({
-      where: { slug },
-      relations: ['rating'],
-    });
-    const totalRating =
-      rating?.reduce((acc, cur) => acc + cur.rating, 0) / rating?.length || 0;
-    const countReviews = rating.length || 0;
-
-    return { rating, totalRating, countReviews };
-  }
-
   async findBy(
     options?: FindManyOptions<RatingEntity>,
   ): Promise<RatingEntity[]> {

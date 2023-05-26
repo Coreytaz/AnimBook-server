@@ -6,23 +6,26 @@ import {
   HttpStatus,
   Param,
   Post,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CatergoriesService } from './catergories.service';
-import { ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiParam, ApiTags } from '@nestjs/swagger';
 import {
   CreateCatergoriesDto,
   CreateSubcategoriesDto,
 } from './dto/create-catergories.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Сatergories')
 @Controller('catergories')
 export class CatergoriesController {
-  constructor(private readonly CatergoriesService: CatergoriesService) {}
+  constructor(private readonly catergoriesService: CatergoriesService) {}
 
   @Get('All')
   @HttpCode(HttpStatus.OK)
   async findAll() {
-    return this.CatergoriesService.findAll();
+    return this.catergoriesService.findAll();
   }
 
   @Get('Sub/:slug')
@@ -33,7 +36,7 @@ export class CatergoriesController {
     name: 'slug',
   })
   async findSub(@Param('slug') slug: string) {
-    return this.CatergoriesService.findSub(slug);
+    return this.catergoriesService.findSub(slug);
   }
 
   @Get('filters/:slug')
@@ -44,21 +47,31 @@ export class CatergoriesController {
     name: 'slug',
   })
   async getFilters(@Param('slug') slug: string) {
-    return this.CatergoriesService.getFilter(slug);
+    return this.catergoriesService.getFilter(slug);
   }
 
   @Post('/create')
+  @UseInterceptors(FileInterceptor('img'))
+  @ApiConsumes('multipart/form-data')
   @ApiBody({ type: CreateCatergoriesDto })
   @HttpCode(HttpStatus.OK)
-  async create(@Body() dto: CreateCatergoriesDto) {
-    return this.CatergoriesService.createCategory(dto);
+  async create(
+    @Body() dto: CreateCatergoriesDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.catergoriesService.createCategory(dto, file);
   }
 
   @Post('/createSub')
+  @UseInterceptors(FileInterceptor('img'))
+  @ApiConsumes('multipart/form-data')
   @ApiBody({ type: CreateSubcategoriesDto })
   @HttpCode(HttpStatus.OK)
-  async createSub(@Body() dto: CreateSubcategoriesDto) {
+  async createSub(
+    @Body() dto: CreateSubcategoriesDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
     const { _id } = dto;
-    return this.CatergoriesService.createSubCategory(dto, _id);
+    return this.catergoriesService.createSubCategory(dto, _id, file);
   }
 }

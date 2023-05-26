@@ -8,6 +8,7 @@ import {
 } from './dto/create-catergories.dto';
 import { GenerateSlugService } from 'src/generate-slug/generate-slug.service';
 import { randomInt } from 'crypto';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class CatergoriesService {
@@ -15,6 +16,7 @@ export class CatergoriesService {
     @InjectRepository(CatergoriesEntity)
     private readonly categoryRepository: Repository<CatergoriesEntity>,
     private readonly generateSlug: GenerateSlugService,
+    private readonly cloudinary: CloudinaryService,
   ) {}
 
   async save(category: CatergoriesEntity): Promise<void> {
@@ -97,13 +99,17 @@ export class CatergoriesService {
     return slug;
   }
 
-  async createCategory(dto: CreateCatergoriesDto): Promise<CatergoriesEntity> {
+  async createCategory(
+    dto: CreateCatergoriesDto,
+    file: Express.Multer.File,
+  ): Promise<CatergoriesEntity> {
     const { name } = dto;
     const slug = await this.createUniqueSlug(name);
+    const { url: img } = await this.cloudinary.upload(file, 'category');
     const category = this.categoryRepository.create({
       name: dto.name,
       description: dto.description,
-      img: dto.img,
+      img,
       slug,
     });
 
@@ -113,6 +119,7 @@ export class CatergoriesService {
   async createSubCategory(
     dto: CreateSubcategoriesDto,
     _id: string | FindOperator<string>,
+    file: Express.Multer.File,
   ): Promise<CatergoriesEntity> {
     const category = await this.categoryRepository.findOneBy({ _id });
 
@@ -124,10 +131,11 @@ export class CatergoriesService {
     }
     const { name } = dto;
     const slug = await this.createUniqueSlug(name);
+    const { url: img } = await this.cloudinary.upload(file, 'subCategory');
     const subcategories = this.categoryRepository.create({
       name: dto.name,
       description: dto.description,
-      img: dto.img,
+      img,
       slug,
     });
     subcategories.parentCategory = category;

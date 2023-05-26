@@ -7,8 +7,8 @@ export class CreateCatergoriesDto {
   @ApiProperty({ example: 'Описание категории 1' })
   readonly description: string;
 
-  @ApiProperty({ example: 'https://nextui.org/images/card-example-4.jpeg' })
-  readonly img: string;
+  @ApiProperty({ type: 'string', format: 'binary', required: true })
+  readonly img: Express.Multer.File;
 }
 
 export class CreateSubcategoriesDto {
@@ -21,6 +21,6 @@ export class CreateSubcategoriesDto {
   @ApiProperty({ example: 'Описание категории 1' })
   readonly description: string;
 
-  @ApiProperty({ example: 'https://nextui.org/images/card-example-3.jpeg' })
-  readonly img: string;
+  @ApiProperty({ type: 'string', format: 'binary', required: true })
+  readonly img: Express.Multer.File;
 }
