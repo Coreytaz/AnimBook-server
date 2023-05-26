@@ -30,10 +30,19 @@ export class CatergoriesService {
   }
 
   async findAll(): Promise<CatergoriesEntity[]> {
-    return this.categoryRepository.find({
-      where: { parentCategory: IsNull() },
-      relations: ['parentCategory'],
-    });
+    return await this.categoryRepository
+      .find({
+        where: { parentCategory: IsNull() },
+        relations: ['subcategories'],
+      })
+      .then((item) => item.filter((item) => item.subcategories.length > 0))
+      .then((item) =>
+        item.map((item) => {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { subcategories, ...rest } = item;
+          return rest as CatergoriesEntity;
+        }),
+      );
   }
   async findSub(slug: string) {
     const { name, subcategories, products } =
