@@ -13,15 +13,6 @@ export class DescriptionsProductService {
     private readonly productService: ProductService,
   ) {}
 
-  async getDescriptionProduct(slug: string) {
-    const { descriptions } = await this.productService.findOne({
-      where: { slug },
-      relations: ['descriptions'],
-    });
-
-    return { descriptionList: descriptions };
-  }
-
   async createAutoFilterToDescritionProductArray(
     productId: string[],
     dto: DescriptionsProductDto,

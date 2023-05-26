@@ -1,11 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductEntity } from './entities/product.entity';
-import { Any, FindOneOptions, Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 import { GenerateSlugService } from 'src/generate-slug/generate-slug.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { randomInt } from 'crypto';
 import { CatergoriesService } from 'src/catergories/catergories.service';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class ProductService {
@@ -14,7 +15,29 @@ export class ProductService {
     private readonly productRepository: Repository<ProductEntity>,
     private catergoriesService: CatergoriesService,
     private readonly generateSlug: GenerateSlugService,
+    private readonly cloudinary: CloudinaryService,
   ) {}
+
+  async getRatingProduct(slug: string) {
+    const { rating } = await this.productRepository.findOne({
+      where: { slug },
+      relations: ['rating'],
+    });
+    const totalRating =
+      rating?.reduce((acc, cur) => acc + cur.rating, 0) / rating?.length || 0;
+    const countReviews = rating.length || 0;
+
+    return { rating, totalRating, countReviews };
+  }
+
+  async getDescriptionProduct(slug: string) {
+    const { descriptions } = await this.productRepository.findOne({
+      where: { slug },
+      relations: ['descriptions'],
+    });
+
+    return { descriptionList: descriptions };
+  }
 
   async save(product: ProductEntity): Promise<void> {
     this.productRepository.save(product);
@@ -36,7 +59,10 @@ export class ProductService {
     return slug;
   }
 
-  async createProduct(dto: CreateProductDto): Promise<ProductEntity> {
+  async createProduct(
+    dto: CreateProductDto,
+    file: Express.Multer.File,
+  ): Promise<ProductEntity> {
     const { name } = dto;
     const slug = await this.createUniqueSlug(name);
     const isLastSubCategories =
@@ -52,10 +78,11 @@ export class ProductService {
       where: { _id: dto.categoryId },
     });
 
+    const { url: img } = await this.cloudinary.upload(file, 'product');
     const product = this.productRepository.create({
       name: dto.name,
       discription: dto.description,
-      img: dto.img,
+      img,
       price: dto.price,
       slug,
       category,

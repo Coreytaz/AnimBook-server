@@ -5,12 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { GenerateSlugModule } from 'src/generate-slug/generate-slug.module';
 import { ProductEntity } from './entities/product.entity';
 import { CatergoriesModule } from 'src/catergories/catergories.module';
+import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([ProductEntity]),
     GenerateSlugModule,
     CatergoriesModule,
+    CloudinaryModule,
   ],
   controllers: [ProductController],
   providers: [ProductService],
