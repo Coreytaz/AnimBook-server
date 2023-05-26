@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductEntity } from './entities/product.entity';
-import { Any, Repository } from 'typeorm';
+import { Any, FindOneOptions, Repository } from 'typeorm';
 import { GenerateSlugService } from 'src/generate-slug/generate-slug.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { randomInt } from 'crypto';
@@ -64,10 +64,10 @@ export class ProductService {
     return this.productRepository.save(product);
   }
 
-  async findOne(filter: {
-    where: { _id?: string; slug?: string };
-  }): Promise<ProductEntity> {
-    const product = await this.productRepository.findOne({ ...filter });
+  async findOne(
+    options: FindOneOptions<ProductEntity>,
+  ): Promise<ProductEntity> {
+    const product = await this.productRepository.findOne({ ...options });
 
     if (!product) {
       throw new BadRequestException(

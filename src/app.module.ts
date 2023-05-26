@@ -9,6 +9,7 @@ import { GenerateSlugModule } from './generate-slug/generate-slug.module';
 import { ProductModule } from './product/product.module';
 import { RatingModule } from './rating/rating.module';
 import { PublisherModule } from './publisher/publisher.module';
+import { DescriptionsProductModule } from './descriptions-product/descriptions-product.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { PublisherModule } from './publisher/publisher.module';
     ProductModule,
     RatingModule,
     PublisherModule,
+    DescriptionsProductModule,
   ],
   controllers: [],
   providers: [],

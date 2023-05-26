@@ -16,15 +16,16 @@ import { CreateRatingDto } from './dto/create-rating.dto';
 export class RatingController {
   constructor(private readonly ratingService: RatingService) {}
 
-  @Get('/:productId')
+  @Get('/:slug')
   @HttpCode(HttpStatus.OK)
   @ApiParam({
-    example: '24b8c31e-db83-4cc5-a769-e75ab540b4c4',
     required: true,
-    name: 'productId',
+    name: 'slug',
+    example:
+      'figurka-neca-teenage-mutant-ninja-turtles---michelangelo-1990-movie',
   })
-  async find(@Param('productId') productId: string) {
-    return this.ratingService.findByProductId(productId);
+  async getRatingProduct(@Param('slug') slug: string) {
+    return this.ratingService.getRatingProduct(slug);
   }
 
   @Post('/create/:userId')

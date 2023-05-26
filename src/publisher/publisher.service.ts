@@ -7,6 +7,7 @@ import { ProductService } from 'src/product/product.service';
 import { CatergoriesService } from 'src/catergories/catergories.service';
 import { GenerateSlugService } from 'src/generate-slug/generate-slug.service';
 import { randomInt } from 'crypto';
+import { DescriptionsProductService } from 'src/descriptions-product/descriptions-product.service';
 
 @Injectable()
 export class PublisherService {
@@ -16,6 +17,7 @@ export class PublisherService {
     private readonly generateSlug: GenerateSlugService,
     private readonly productService: ProductService,
     private readonly catergoriesService: CatergoriesService,
+    private readonly descriptionsProductService: DescriptionsProductService,
   ) {}
 
   async createUniqueSlug(text: string): Promise<string> {
@@ -66,6 +68,14 @@ export class PublisherService {
       products,
       slug: await this.createUniqueSlug(dto.name),
     });
+
+    await this.descriptionsProductService.createAutoFilterToDescritionProductArray(
+      dto.productsId,
+      {
+        name: 'Издатель',
+        description: dto.name,
+      },
+    );
 
     return this.publisherRepository.save(publisher);
   }
