@@ -20,7 +20,7 @@ export class SearchService {
     );
     const products = (await this.productService.findByName(q)).map((item) => {
       return {
-        value: `catalog/${item.slug}`,
+        value: `product/${item.slug}`,
         label: item.name,
       };
     });
