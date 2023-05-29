@@ -28,6 +28,12 @@ export class CatergoriesController {
     return this.catergoriesService.findAll();
   }
 
+  @Get('popular')
+  @HttpCode(HttpStatus.OK)
+  async findPopular() {
+    return this.catergoriesService.findPopular();
+  }
+
   @Get('Sub/:slug')
   @HttpCode(HttpStatus.OK)
   @ApiParam({

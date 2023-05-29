@@ -11,6 +11,7 @@ import { RatingModule } from './rating/rating.module';
 import { PublisherModule } from './publisher/publisher.module';
 import { DescriptionsProductModule } from './descriptions-product/descriptions-product.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     PublisherModule,
     DescriptionsProductModule,
     CloudinaryModule,
+    SearchModule,
   ],
   controllers: [],
   providers: [],

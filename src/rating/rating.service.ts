@@ -21,10 +21,10 @@ export class RatingService {
     return await this.ratingRepository.find({ ...options });
   }
 
-  async createReviews(userId: string, dto: CreateRatingDto) {
-    const user = await this.userService.findOne({ where: { id: userId } });
+  async createReviews(dto: CreateRatingDto) {
+    const user = await this.userService.findOne({ where: { id: dto.userId } });
     const product = await this.productService.findOne({
-      where: { _id: dto.productId },
+      where: { slug: dto.slug },
     });
 
     const existingRating = await this.ratingRepository.findOne({
@@ -35,9 +35,7 @@ export class RatingService {
     });
 
     if (existingRating) {
-      throw new ConflictException(
-        'Пользователь уже оставлял отзыв об этом продукте',
-      );
+      throw new ConflictException('Вы уже оставили отзыв');
     }
 
     const rating = await this.ratingRepository.create({
