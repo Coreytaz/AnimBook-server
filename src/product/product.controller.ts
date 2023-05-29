@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Query,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -13,6 +14,7 @@ import { ApiBody, ApiConsumes, ApiParam, ApiTags } from '@nestjs/swagger';
 import { CreateProductDto } from './dto/create-product.dto';
 import { ProductService } from './product.service';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { BodyProduct, QueryProduct } from './types';
 
 @ApiTags('Product')
 @Controller('product')
@@ -31,7 +33,18 @@ export class ProductController {
     return this.productService.createProduct(dto, file);
   }
 
-  @Get('/:slug')
+  @Get('getProducts/:slug')
+  @HttpCode(HttpStatus.OK)
+  @ApiParam({
+    required: true,
+    name: 'slug',
+    example:
+      'figurka-neca-teenage-mutant-ninja-turtles---michelangelo-1990-movie',
+  })
+  async getProduct(@Param('slug') slug: string, @Query() query: QueryProduct) {
+    return this.productService.getProducts(slug, query);
+  }
+  @Get('slug/:slug')
   @HttpCode(HttpStatus.OK)
   @ApiParam({
     required: true,
@@ -40,7 +53,28 @@ export class ProductController {
       'figurka-neca-teenage-mutant-ninja-turtles---michelangelo-1990-movie',
   })
   async findOne(@Param('slug') slug: string) {
-    return this.productService.findOne({ where: { slug } });
+    return this.productService.findOne({
+      where: { slug },
+      relations: ['rating'],
+    });
+  }
+
+  @Get('id/:productId')
+  @HttpCode(HttpStatus.OK)
+  @ApiParam({
+    required: true,
+    name: 'productId',
+  })
+  async getProductsById(@Param('productId') productId: string) {
+    const productsId = productId.split('_');
+    return this.productService.findArray(productsId);
+  }
+
+  @Post('id')
+  @HttpCode(HttpStatus.OK)
+  @ApiBody({ type: BodyProduct })
+  async postProductsById(@Body() { productsId }: BodyProduct) {
+    return this.productService.findArray(productsId);
   }
 
   @Get('Descriptions-product/:slug')

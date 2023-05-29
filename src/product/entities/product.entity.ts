@@ -12,6 +12,11 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+interface ArrayImage {
+  src: string;
+  alt: string;
+}
+
 @Entity('product')
 export class ProductEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -29,8 +34,8 @@ export class ProductEntity {
   @Column()
   price: number;
 
-  @Column()
-  img: string;
+  @Column('json', { default: [] })
+  img: ArrayImage[];
 
   @ManyToOne(() => CatergoriesEntity, (category) => category.products)
   category: CatergoriesEntity;

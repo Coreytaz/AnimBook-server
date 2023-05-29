@@ -1,6 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOneOptions, FindOperator, IsNull, Repository } from 'typeorm';
+import {
+  FindOneOptions,
+  FindOperator,
+  IsNull,
+  Like,
+  Repository,
+} from 'typeorm';
 import { CatergoriesEntity } from './entities/catergories.entity';
 import {
   CreateCatergoriesDto,
@@ -23,6 +29,15 @@ export class CatergoriesService {
     this.categoryRepository.save(category);
   }
 
+  async findByName(search: string): Promise<CatergoriesEntity[]> {
+    return await this.categoryRepository.find({
+      where: {
+        name: Like(`%${search}%`),
+      },
+      take: 5,
+    });
+  }
+
   async findBy(
     options: FindOneOptions<CatergoriesEntity>,
   ): Promise<CatergoriesEntity> {
@@ -33,28 +48,55 @@ export class CatergoriesService {
     return await this.categoryRepository
       .find({
         where: { parentCategory: IsNull() },
-        relations: ['subcategories'],
+        relations: ['subcategories', 'products'],
       })
-      .then((item) => item.filter((item) => item.subcategories.length > 0))
+      .then((item) =>
+        item.filter(
+          (item) => item.subcategories.length > 0 || item.products.length > 0,
+        ),
+      )
       .then((item) =>
         item.map((item) => {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { subcategories, ...rest } = item;
+          const { subcategories, products, ...rest } = item;
           return rest as CatergoriesEntity;
         }),
       );
   }
-  async findSub(slug: string) {
-    const { name, subcategories, products } =
-      await this.categoryRepository.findOne({
-        where: { slug },
+
+  async findPopular() {
+    return await this.categoryRepository
+      .find({
+        where: { parentCategory: IsNull() },
         relations: ['subcategories', 'products'],
-      });
+        take: 4,
+        order: {
+          name: 'DESC',
+        },
+      })
+      .then((item) =>
+        item.filter(
+          (item) => item.subcategories.length > 0 || item.products.length > 0,
+        ),
+      )
+      .then((item) =>
+        item.map((item) => {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { subcategories, products, ...rest } = item;
+          return rest as CatergoriesEntity;
+        }),
+      );
+  }
+
+  async findSub(slug: string) {
+    const { name, subcategories } = await this.categoryRepository.findOne({
+      where: { slug },
+      relations: ['subcategories', 'products'],
+    });
 
     return {
       categoryName: name || '',
       subcategories,
-      products,
     };
   }
 

@@ -18,7 +18,7 @@ export class CatergoriesEntity {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ default: null })
   description?: string;
 
   @Column()

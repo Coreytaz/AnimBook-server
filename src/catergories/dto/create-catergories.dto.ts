@@ -4,7 +4,7 @@ export class CreateCatergoriesDto {
   @ApiProperty({ example: 'Фигурки' })
   readonly name: string;
 
-  @ApiProperty({ example: 'Описание категории 1' })
+  @ApiProperty({ example: 'Описание категории 1', required: false })
   readonly description: string;
 
   @ApiProperty({ type: 'string', format: 'binary', required: true })
@@ -18,8 +18,8 @@ export class CreateSubcategoriesDto {
   @ApiProperty({ example: 'Акриловые фигурки' })
   readonly name: string;
 
-  @ApiProperty({ example: 'Описание категории 1' })
-  readonly description: string;
+  @ApiProperty({ example: 'Описание категории 1', required: false })
+  readonly description?: string;
 
   @ApiProperty({ type: 'string', format: 'binary', required: true })
   readonly img: Express.Multer.File;
