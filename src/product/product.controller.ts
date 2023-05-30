@@ -14,7 +14,7 @@ import { ApiBody, ApiConsumes, ApiParam, ApiTags } from '@nestjs/swagger';
 import { CreateProductDto } from './dto/create-product.dto';
 import { ProductService } from './product.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { BodyProduct, QueryProduct } from './types';
+import { BodyProduct, QueryFilterRating, QueryProduct } from './types';
 
 @ApiTags('Product')
 @Controller('product')
@@ -97,7 +97,10 @@ export class ProductController {
     example:
       'figurka-neca-teenage-mutant-ninja-turtles---michelangelo-1990-movie',
   })
-  async getRatingProduct(@Param('slug') slug: string) {
-    return this.productService.getRatingProduct(slug);
+  async getRatingProduct(
+    @Param('slug') slug: string,
+    @Query() query: QueryFilterRating,
+  ) {
+    return this.productService.getRatingProduct(slug, query);
   }
 }
