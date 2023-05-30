@@ -47,3 +47,10 @@ export class QueryProduct {
   })
   readonly sort: SortEnum;
 }
+
+export class QueryFilterRating {
+  @ApiProperty({
+    example: ['1', '2'],
+  })
+  readonly filter: string[];
+}

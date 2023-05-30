@@ -47,7 +47,6 @@ export class UsersService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    console.log(id, updateUserDto);
     await this.repository.save({
       id,
       ...updateUserDto,

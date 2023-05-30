@@ -9,7 +9,7 @@ import { CatergoriesService } from 'src/catergories/catergories.service';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { paginate } from 'nestjs-typeorm-paginate';
 import { ConfigService } from '@nestjs/config';
-import { QueryProduct, SortEnum } from './types';
+import { QueryFilterRating, QueryProduct, SortEnum } from './types';
 
 @Injectable()
 export class ProductService {
@@ -77,7 +77,7 @@ export class ProductService {
     });
   }
 
-  async getRatingProduct(slug: string) {
+  async getRatingProduct(slug: string, query: QueryFilterRating) {
     const product = await this.productRepository
       .createQueryBuilder('product')
       .where('product.slug = :slug', { slug })
@@ -85,12 +85,32 @@ export class ProductService {
       .leftJoinAndMapOne('rating.user', 'rating.user', 'user')
       .getOne();
 
+    const filtersCounts = this.countDigits(
+      product.rating.map((item) => item.rating),
+    );
+
     const totalRating =
       product.rating?.reduce((acc, cur) => acc + cur.rating, 0) /
         product.rating?.length || 0;
     const countReviews = product.rating.length || 0;
 
-    return { rating: product.rating, totalRating, countReviews };
+    if (query.filter) {
+      return {
+        rating: product.rating.filter((item) =>
+          query.filter.includes(String(item.rating)),
+        ),
+        totalRating,
+        countReviews,
+        filtersCounts,
+      };
+    }
+
+    return {
+      rating: product.rating,
+      totalRating,
+      countReviews,
+      filtersCounts,
+    };
   }
 
   async getDescriptionProduct(slug: string) {
@@ -204,5 +224,27 @@ export class ProductService {
       prevPage: prevPage,
       lastPage: lastPage,
     };
+  }
+
+  countDigits(number: number[]): {
+    1: string;
+    2: string;
+    3: string;
+    4: string;
+    5: string;
+  } {
+    const digitMap = new Map();
+
+    for (let i = 0; i < number.length; i++) {
+      const digit = number[i];
+
+      if (digitMap.has(digit)) {
+        digitMap.set(digit, digitMap.get(digit) + 1);
+      } else {
+        digitMap.set(digit, 1);
+      }
+    }
+
+    return Object.fromEntries(digitMap);
   }
 }
