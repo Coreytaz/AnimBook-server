@@ -7,8 +7,9 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { randomInt } from 'crypto';
 import { CatergoriesService } from 'src/catergories/catergories.service';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
-import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
+import { paginate } from 'nestjs-typeorm-paginate';
 import { ConfigService } from '@nestjs/config';
+import { QueryProduct, SortEnum } from './types';
 
 @Injectable()
 export class ProductService {
@@ -30,15 +31,43 @@ export class ProductService {
     });
   }
 
-  async getProducts(slug: string, query: IPaginationOptions) {
+  async getProducts(slug: string, query: QueryProduct) {
     const limit = query.limit || 6;
     const page = query.page || 1;
-    const queryBuilder = this.productRepository
-      .createQueryBuilder('product')
+    const queryBuilder = this.productRepository.createQueryBuilder('product');
+
+    queryBuilder
       .leftJoin('product.category', 'category')
       .where('category.slug = :slug', { slug })
       .leftJoinAndSelect('product.rating', 'rating')
       .select(['product', 'rating.rating']);
+
+    if (query.minPrice) {
+      queryBuilder.andWhere('product.price >= :minPrice', {
+        minPrice: query.minPrice,
+      });
+    }
+
+    if (query.maxPrice) {
+      queryBuilder.andWhere('product.price <= :maxPrice', {
+        maxPrice: query.maxPrice,
+      });
+    }
+
+    switch (query.sort) {
+      case SortEnum.LowerPrice:
+        queryBuilder.addOrderBy('product.price', 'ASC');
+        break;
+      case SortEnum.TowerPrice:
+        queryBuilder.addOrderBy('product.price', 'DESC');
+        break;
+      case SortEnum.Rating:
+        queryBuilder.addOrderBy('rating.rating', 'ASC');
+        break;
+      default:
+        queryBuilder.addOrderBy('product.price', 'ASC');
+        break;
+    }
 
     return paginate<ProductEntity>(queryBuilder, {
       ...query,
@@ -54,7 +83,6 @@ export class ProductService {
       .where('product.slug = :slug', { slug })
       .leftJoinAndSelect('product.rating', 'rating')
       .leftJoinAndMapOne('rating.user', 'rating.user', 'user')
-      .select(['product._id', 'rating', 'user.username'])
       .getOne();
 
     const totalRating =

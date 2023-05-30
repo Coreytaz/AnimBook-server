@@ -1,5 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+export enum SortEnum {
+  LowerPrice = '-price',
+  TowerPrice = 'price',
+  Rating = 'rating',
+}
 export class ParamsProduct {
   @ApiProperty({
     example: 'figurki',
@@ -20,10 +25,25 @@ export class QueryProduct {
   @ApiProperty({
     example: 10,
   })
-  readonly limit: number;
+  readonly limit: string;
 
   @ApiProperty({
     example: 1,
   })
-  readonly page: number;
+  readonly page: string;
+
+  @ApiProperty({
+    example: 340,
+  })
+  readonly minPrice: string;
+
+  @ApiProperty({
+    example: 1000,
+  })
+  readonly maxPrice: string;
+
+  @ApiProperty({
+    enum: SortEnum,
+  })
+  readonly sort: SortEnum;
 }
