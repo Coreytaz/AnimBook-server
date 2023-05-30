@@ -195,9 +195,11 @@ export class ProductService {
   }
 
   async findArray(productsId: string[]): Promise<ProductEntity[]> {
-    const product = await this.productRepository
+    const product = this.productRepository
       .createQueryBuilder('product')
       .whereInIds(productsId)
+      .leftJoinAndSelect('product.rating', 'rating')
+      .select(['product', 'rating.rating'])
       .getMany();
 
     if (!product) {
