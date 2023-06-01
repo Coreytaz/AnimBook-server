@@ -2,9 +2,9 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
-import { compare, genSalt, hash } from 'bcryptjs';
+import { genSalt, hash } from 'bcryptjs';
 
 @Injectable()
 export class UsersService {
@@ -17,10 +17,8 @@ export class UsersService {
     this.repository.save(user);
   }
 
-  findOne(filter: {
-    where: { id?: string; username?: string; email?: string; phone?: string };
-  }): Promise<UserEntity> {
-    const user = this.repository.findOne({ ...filter });
+  findOne(options: FindOneOptions<UserEntity>): Promise<UserEntity> {
+    const user = this.repository.findOne({ ...options });
 
     if (!user) {
       throw new BadRequestException(
@@ -30,6 +28,19 @@ export class UsersService {
     }
 
     return user;
+  }
+
+  async update(userId: string, dto: UpdateUserDto) {
+    const result = await this.repository.update({ id: userId }, dto);
+
+    if (result.affected === 0) {
+      throw new BadRequestException(
+        'Не удалось найти пользователя',
+        'Неверный запрос',
+      );
+    }
+    const updatedUser = await this.findOne({ where: { id: userId } });
+    return updatedUser;
   }
 
   async create(dto: CreateUserDto) {
@@ -44,12 +55,5 @@ export class UsersService {
     });
 
     return this.repository.save(newUser);
-  }
-
-  async update(id: string, updateUserDto: UpdateUserDto) {
-    await this.repository.save({
-      id,
-      ...updateUserDto,
-    });
   }
 }

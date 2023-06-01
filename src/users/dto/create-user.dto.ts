@@ -19,4 +19,10 @@ export class CreateUserDto {
 
   @ApiProperty({ example: 'улица Пушкина' })
   readonly address: string;
+
+  @ApiProperty({ example: '620222' })
+  readonly postIndex: string;
+
+  @ApiProperty({ example: '1' })
+  readonly apartaments: string;
 }

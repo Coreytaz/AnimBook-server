@@ -1,3 +1,4 @@
+import { OrderEntity } from 'src/order/entities/order.entity';
 import { RatingEntity } from 'src/rating/entities/rating.entity';
 import {
   Column,
@@ -28,8 +29,17 @@ export class UserEntity {
   @Column({ default: null })
   address?: string;
 
+  @Column({ default: null })
+  postIndex?: string;
+
+  @Column({ default: null })
+  apartaments?: string;
+
   @OneToMany(() => RatingEntity, (rating) => rating.user)
   rating: RatingEntity[];
+
+  @OneToMany(() => OrderEntity, (order) => order.user)
+  orders: OrderEntity[];
 
   @CreateDateColumn()
   created_at: Date;
