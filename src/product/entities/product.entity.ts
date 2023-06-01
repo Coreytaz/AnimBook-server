@@ -1,5 +1,6 @@
 import { CatergoriesEntity } from 'src/catergories/entities/catergories.entity';
 import { DescriptionsProductEntity } from 'src/descriptions-product/entities/descriptions-product.entity';
+import { OrderItemEntity } from 'src/order/entities/orderItem.entity';
 import { PublisherEntity } from 'src/publisher/entities/publisher.entity';
 import { RatingEntity } from 'src/rating/entities/rating.entity';
 import {
@@ -45,6 +46,9 @@ export class ProductEntity {
 
   @OneToMany(() => RatingEntity, (rating) => rating.product)
   rating: RatingEntity[];
+
+  @OneToMany(() => OrderItemEntity, (orderItem) => orderItem.product)
+  orderItems: OrderItemEntity[];
 
   @OneToMany(
     () => DescriptionsProductEntity,

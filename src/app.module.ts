@@ -12,6 +12,8 @@ import { PublisherModule } from './publisher/publisher.module';
 import { DescriptionsProductModule } from './descriptions-product/descriptions-product.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { SearchModule } from './search/search.module';
+import { PaymentModule } from './payment/payment.module';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -31,6 +33,8 @@ import { SearchModule } from './search/search.module';
     DescriptionsProductModule,
     CloudinaryModule,
     SearchModule,
+    PaymentModule,
+    OrderModule,
   ],
   controllers: [],
   providers: [],

@@ -2,6 +2,8 @@ import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { CatergoriesEntity } from 'src/catergories/entities/catergories.entity';
 import { DescriptionsProductEntity } from 'src/descriptions-product/entities/descriptions-product.entity';
+import { OrderEntity } from 'src/order/entities/order.entity';
+import { OrderItemEntity } from 'src/order/entities/orderItem.entity';
 import { ProductEntity } from 'src/product/entities/product.entity';
 import { PublisherEntity } from 'src/publisher/entities/publisher.entity';
 import { RatingEntity } from 'src/rating/entities/rating.entity';
@@ -24,5 +26,7 @@ export const getTypeormConfig = async (
     RatingEntity,
     PublisherEntity,
     DescriptionsProductEntity,
+    OrderItemEntity,
+    OrderEntity,
   ],
 });
