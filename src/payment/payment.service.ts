@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { MakePaymentDto } from './dto/make-payment.dto';
 import { HttpService } from '@nestjs/axios';
 import { catchError, firstValueFrom } from 'rxjs';
+import { PaymentCheck, PaymentCreate } from './types';
 
 @Injectable()
 export class PaymentService {
@@ -16,7 +17,7 @@ export class PaymentService {
     try {
       const { data } = await firstValueFrom(
         this.httpService
-          .post(
+          .post<PaymentCreate>(
             'https://api.yookassa.ru/v3/payments',
             {
               amount: {
@@ -61,13 +62,16 @@ export class PaymentService {
     try {
       const { data } = await firstValueFrom(
         this.httpService
-          .get(`https://api.yookassa.ru/v3/payments/${paymentId}`, {
-            method: 'GET',
-            auth: {
-              username: '215073',
-              password: 'test_FevXsgz4-yKXptOaLNzloeqKI79o_7oR7j89hqudydg',
+          .get<PaymentCheck>(
+            `https://api.yookassa.ru/v3/payments/${paymentId}`,
+            {
+              method: 'GET',
+              auth: {
+                username: '215073',
+                password: 'test_FevXsgz4-yKXptOaLNzloeqKI79o_7oR7j89hqudydg',
+              },
             },
-          })
+          )
           .pipe(
             catchError((error) => {
               this.logger.error(error.response.data);
