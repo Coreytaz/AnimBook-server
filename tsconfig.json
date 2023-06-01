@@ -19,5 +19,6 @@
     "noFallthroughCasesInSwitch": false,
     "esModuleInterop": true,
     "moduleResolution": "node"
-  }
+  },
+  "files": ["./types/typings.d.ts"]
 }

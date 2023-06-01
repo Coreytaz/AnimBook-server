@@ -1,19 +1,15 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-
+import axios from 'axios';
 import { ConfigService } from '@nestjs/config';
 import { MakePaymentDto } from './dto/make-payment.dto';
-import { HttpService } from '@nestjs/axios';
 
 @Injectable()
 export class PaymentService {
-  constructor(
-    private readonly configService: ConfigService,
-    private readonly httpService: HttpService,
-  ) {}
+  constructor(private readonly configService: ConfigService) {}
 
   async makePayment(dto: MakePaymentDto) {
     try {
-      const { data } = await this.httpService.axiosRef({
+      const { data } = await axios({
         method: 'POST',
         url: 'https://api.yookassa.ru/v3/payments',
         headers: {
@@ -48,7 +44,7 @@ export class PaymentService {
 
   async checkPayment(paymentId: string) {
     try {
-      const { data } = await this.httpService.axiosRef({
+      const { data } = await axios({
         method: 'GET',
         url: `https://api.yookassa.ru/v3/payments/${paymentId}`,
         auth: {
