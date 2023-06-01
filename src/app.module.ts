@@ -14,6 +14,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { SearchModule } from './search/search.module';
 import { PaymentModule } from './payment/payment.module';
 import { OrderModule } from './order/order.module';
+import { BannerModule } from './banner/banner.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { OrderModule } from './order/order.module';
     SearchModule,
     PaymentModule,
     OrderModule,
+    BannerModule,
   ],
   controllers: [],
   providers: [],
