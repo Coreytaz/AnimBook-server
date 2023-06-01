@@ -20,6 +20,26 @@ export class OrderController {
 
   @ApiParam({
     required: true,
+    name: 'userId',
+    example: '20ab6ec3-84e1-440e-af36-3bc2eb86f999',
+  })
+  @Get('deliveried/:userId')
+  getDeliveried(@Param() { userId }: { userId: string }) {
+    return this.orderService.getDeliveried(userId);
+  }
+
+  @ApiParam({
+    required: true,
+    name: 'orderId',
+    example: '20ab6ec3-84e1-440e-af36-3bc2eb86f999',
+  })
+  @Get('getOrder/:orderId')
+  getOrder(@Param() { orderId }: { orderId: string }) {
+    return this.orderService.getOrder(orderId);
+  }
+
+  @ApiParam({
+    required: true,
     name: 'orderId',
     example: '20ab6ec3-84e1-440e-af36-3bc2eb86f999',
   })

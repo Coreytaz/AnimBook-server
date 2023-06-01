@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOneOptions, Repository } from 'typeorm';
+import { Any, FindOneOptions, Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { ProductService } from 'src/product/product.service';
 import { PaymentService } from 'src/payment/payment.service';
@@ -10,12 +10,6 @@ import { OrderItemEntity } from './entities/orderItem.entity';
 
 @Injectable()
 export class OrderService {
-  getDeliveries(userId: string) {
-    return this.orderRepository.find({
-      where: { user: { id: userId } },
-      relations: ['items', 'items.product'],
-    });
-  }
   constructor(
     @InjectRepository(OrderEntity)
     private readonly orderRepository: Repository<OrderEntity>,
@@ -25,6 +19,37 @@ export class OrderService {
     private readonly productService: ProductService,
     private readonly paymentService: PaymentService,
   ) {}
+
+  async getDeliveries(userId: string) {
+    return await this.orderRepository.find({
+      where: {
+        user: { id: userId },
+        status: Any([
+          Status.AwaitingPayment,
+          Status.AwaitingСonfirmation,
+          Status.InTransit,
+        ]),
+      },
+    });
+  }
+
+  async getDeliveried(userId: string) {
+    return await this.orderRepository.find({
+      where: {
+        user: { id: userId },
+        status: Any([Status.Delivered]),
+      },
+    });
+  }
+
+  async getOrder(orderId: string) {
+    return await this.orderRepository.findOne({
+      where: {
+        _id: orderId,
+      },
+      relations: ['items', 'items.product', 'items.product.rating'],
+    });
+  }
 
   async findOneOrder(
     options: FindOneOptions<OrderEntity>,
