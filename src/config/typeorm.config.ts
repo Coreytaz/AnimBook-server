@@ -14,11 +14,11 @@ export const getTypeormConfig = async (
   configService: ConfigService,
 ): Promise<TypeOrmModuleOptions> => ({
   type: 'postgres',
-  host: configService.get('DB-HOST'),
-  port: configService.get('DB-PORT'),
-  username: configService.get('DB-USERNAME'),
-  password: configService.get('DB-PASSWORD'),
-  database: configService.get('DB-DATEBASE'),
+  host: configService.get('DB_HOST'),
+  port: configService.get('DB_PORT'),
+  username: configService.get('DB_USERNAME'),
+  password: configService.get('DB_PASSWORD'),
+  database: configService.get('DB_DATEBASE'),
   synchronize: true,
   entities: [
     UserEntity,

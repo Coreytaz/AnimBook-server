@@ -1,11 +1,11 @@
 {
   "version": 2,
   "env": {
-    "DB-HOST": "fvx.h.filess.io",
-    "DB-PORT": "5432",
-    "DB-USERNAME": "animbook_packfinish",
-    "DB-PASSWORD": "3d867a1b25bd67ee733d7b6efac62309f6bb749f",
-    "DB-DATEBASE": "animbook_packfinish",
+    "DB_HOST": "fvx.h.filess.io",
+    "DB_PORT": "5432",
+    "DB_USERNAME": "animbook_packfinish",
+    "DB_PASSWORD": "3d867a1b25bd67ee733d7b6efac62309f6bb749f",
+    "DB_DATEBASE": "animbook_packfinish",
     "JWT_SECRET": "qwerty123",
     "API_FRONT": "http://localhost:3000",
     "CLOUDINARY_CLOUD_NAME": "dnnnv6ofv",
