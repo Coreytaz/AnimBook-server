@@ -1,5 +1,5 @@
-import { ProductEntity } from 'src/product/entities/product.entity';
-import { PublisherEntity } from 'src/publisher/entities/publisher.entity';
+import { ProductEntity } from '../../product/entities/product.entity';
+import { PublisherEntity } from '../../publisher/entities/publisher.entity';
 import {
   Column,
   Entity,

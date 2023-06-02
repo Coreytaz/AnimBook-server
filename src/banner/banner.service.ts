@@ -3,7 +3,7 @@ import { CreateBannerDto } from './dto/create-banner.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BannerEntity } from './entities/banner.entity';
-import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()

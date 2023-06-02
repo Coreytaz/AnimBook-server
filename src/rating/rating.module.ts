@@ -3,8 +3,8 @@ import { RatingController } from './rating.controller';
 import { RatingService } from './rating.service';
 import { RatingEntity } from './entities/rating.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersModule } from 'src/users/users.module';
-import { ProductModule } from 'src/product/product.module';
+import { UsersModule } from '../users/users.module';
+import { ProductModule } from '../product/product.module';
 
 @Module({
   imports: [

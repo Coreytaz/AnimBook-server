@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { SearchController } from './search.controller';
 import { SearchService } from './search.service';
-import { CatergoriesModule } from 'src/catergories/catergories.module';
-import { ProductModule } from 'src/product/product.module';
+import { CatergoriesModule } from '../catergories/catergories.module';
+import { ProductModule } from '../product/product.module';
 
 @Module({
   imports: [CatergoriesModule, ProductModule],
