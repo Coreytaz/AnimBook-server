@@ -1,5 +1,5 @@
-import { OrderEntity } from 'src/order/entities/order.entity';
-import { RatingEntity } from 'src/rating/entities/rating.entity';
+import { OrderEntity } from '../../order/entities/order.entity';
+import { RatingEntity } from '../../rating/entities/rating.entity';
 import {
   Column,
   Entity,

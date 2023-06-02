@@ -12,9 +12,9 @@ import {
   CreateCatergoriesDto,
   CreateSubcategoriesDto,
 } from './dto/create-catergories.dto';
-import { GenerateSlugService } from 'src/generate-slug/generate-slug.service';
+import { GenerateSlugService } from '../generate-slug/generate-slug.service';
 import { randomInt } from 'crypto';
-import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Injectable()
 export class CatergoriesService {

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { CatergoriesService } from 'src/catergories/catergories.service';
-import { ProductService } from 'src/product/product.service';
+import { CatergoriesService } from '../catergories/catergories.service';
+import { ProductService } from '../product/product.service';
 
 @Injectable()
 export class SearchService {

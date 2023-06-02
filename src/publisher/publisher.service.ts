@@ -3,11 +3,11 @@ import { PublisherProductDto } from './dto/create-publisher.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Any, In, Repository } from 'typeorm';
 import { PublisherEntity } from './entities/publisher.entity';
-import { ProductService } from 'src/product/product.service';
-import { CatergoriesService } from 'src/catergories/catergories.service';
-import { GenerateSlugService } from 'src/generate-slug/generate-slug.service';
+import { ProductService } from '../product/product.service';
+import { CatergoriesService } from '../catergories/catergories.service';
+import { GenerateSlugService } from '../generate-slug/generate-slug.service';
 import { randomInt } from 'crypto';
-import { DescriptionsProductService } from 'src/descriptions-product/descriptions-product.service';
+import { DescriptionsProductService } from '../descriptions-product/descriptions-product.service';
 
 @Injectable()
 export class PublisherService {

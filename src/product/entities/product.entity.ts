@@ -1,8 +1,8 @@
-import { CatergoriesEntity } from 'src/catergories/entities/catergories.entity';
-import { DescriptionsProductEntity } from 'src/descriptions-product/entities/descriptions-product.entity';
-import { OrderItemEntity } from 'src/order/entities/orderItem.entity';
-import { PublisherEntity } from 'src/publisher/entities/publisher.entity';
-import { RatingEntity } from 'src/rating/entities/rating.entity';
+import { CatergoriesEntity } from '../../catergories/entities/catergories.entity';
+import { DescriptionsProductEntity } from '../../descriptions-product/entities/descriptions-product.entity';
+import { OrderItemEntity } from '../../order/entities/orderItem.entity';
+import { PublisherEntity } from '../../publisher/entities/publisher.entity';
+import { RatingEntity } from '../../rating/entities/rating.entity';
 import {
   Column,
   CreateDateColumn,

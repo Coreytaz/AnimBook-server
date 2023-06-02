@@ -1,9 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Any, FindOneOptions, Repository } from 'typeorm';
-import { UsersService } from 'src/users/users.service';
-import { ProductService } from 'src/product/product.service';
-import { PaymentService } from 'src/payment/payment.service';
+import { UsersService } from '../users/users.service';
+import { ProductService } from '../product/product.service';
+import { PaymentService } from '../payment/payment.service';
 import { Products, CreateOrderWithUserDto } from './dto/create-order.dto';
 import { OrderEntity, Status } from './entities/order.entity';
 import { OrderItemEntity } from './entities/orderItem.entity';
