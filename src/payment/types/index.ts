@@ -39,7 +39,6 @@ export interface Confirmation {
   confirmation_url: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Metadata {}
 
 export interface Recipient {

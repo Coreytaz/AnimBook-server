@@ -48,7 +48,7 @@ export class CatergoriesService {
     return await this.categoryRepository
       .find({
         where: { parentCategory: IsNull() },
-        relations: ['subcategories', 'products'],
+        relations: { subcategories: true, products: true },
       })
       .then((item) =>
         item.filter(
@@ -57,7 +57,6 @@ export class CatergoriesService {
       )
       .then((item) =>
         item.map((item) => {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { subcategories, products, ...rest } = item;
           return rest as CatergoriesEntity;
         }),
@@ -68,7 +67,7 @@ export class CatergoriesService {
     return await this.categoryRepository
       .find({
         where: { parentCategory: IsNull() },
-        relations: ['subcategories', 'products'],
+        relations: { subcategories: true, products: true },
         take: 4,
         order: {
           name: 'DESC',
@@ -81,7 +80,6 @@ export class CatergoriesService {
       )
       .then((item) =>
         item.map((item) => {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { subcategories, products, ...rest } = item;
           return rest as CatergoriesEntity;
         }),
@@ -91,7 +89,7 @@ export class CatergoriesService {
   async findSub(slug: string) {
     const { name, subcategories } = await this.categoryRepository.findOne({
       where: { slug },
-      relations: ['subcategories', 'products'],
+      relations: { subcategories: true, products: true },
     });
 
     return {
@@ -103,7 +101,7 @@ export class CatergoriesService {
   async getFilter(slug: string): Promise<any> {
     const { products, publisher } = await this.categoryRepository.findOne({
       where: { slug },
-      relations: ['products', 'publisher'],
+      relations: { products: true, publisher: true },
     });
     const allPrice = products.map((item) => item.price);
     const lowPriceAndMax = {
@@ -120,7 +118,7 @@ export class CatergoriesService {
   async isLastSubCategories(_id: string): Promise<boolean> {
     const isLast = await this.categoryRepository.findOne({
       where: { _id },
-      relations: ['subcategories'],
+      relations: { subcategories: true },
     });
     if (!isLast) {
       throw new BadRequestException(

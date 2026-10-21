@@ -47,7 +47,7 @@ export class OrderService {
       where: {
         _id: orderId,
       },
-      relations: ['items', 'items.product', 'items.product.rating'],
+      relations: { items: { product: { rating: true } } },
     });
   }
 

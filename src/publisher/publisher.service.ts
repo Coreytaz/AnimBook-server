@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PublisherProductDto } from './dto/create-publisher.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Any, In, Repository } from 'typeorm';
+import { Any, Repository } from 'typeorm';
 import { PublisherEntity } from './entities/publisher.entity';
 import { ProductService } from '../product/product.service';
 import { CatergoriesService } from '../catergories/catergories.service';

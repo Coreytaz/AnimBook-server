@@ -17,7 +17,6 @@ export class AuthService {
 
     if (user) {
       if (await compare(password, user.password)) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { password, ...result } = user;
         return result;
       }
@@ -46,7 +45,6 @@ export class AuthService {
       );
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...userData } = await this.userService.create(dto);
 
     return {

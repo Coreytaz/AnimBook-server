@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { transliterate as tr, slugify } from 'transliteration';
+import { slugify } from 'transliteration';
 
 @Injectable()
 export class GenerateSlugService {

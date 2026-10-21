@@ -55,7 +55,7 @@ export class ProductController {
   async findOne(@Param('slug') slug: string) {
     return this.productService.findOne({
       where: { slug },
-      relations: ['rating'],
+      relations: { rating: true },
     });
   }
 

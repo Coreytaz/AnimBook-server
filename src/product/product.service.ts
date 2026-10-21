@@ -7,7 +7,6 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { randomInt } from 'crypto';
 import { CatergoriesService } from '../catergories/catergories.service';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
-import { paginate } from 'nestjs-typeorm-paginate';
 import { ConfigService } from '@nestjs/config';
 import { QueryFilterRating, QueryProduct, SortEnum } from './types';
 
@@ -69,12 +68,31 @@ export class ProductService {
         break;
     }
 
-    return paginate<ProductEntity>(queryBuilder, {
-      ...query,
-      limit,
-      page,
-      route: `${this.configService.get('API_FRONT')}${slug}`,
-    });
+    const currentPage = Math.max(1, Number(page));
+    const perPage = Math.max(1, Number(limit));
+    const [items, totalItems] = await queryBuilder
+      .skip((currentPage - 1) * perPage)
+      .take(perPage)
+      .getManyAndCount();
+    const totalPages = Math.ceil(totalItems / perPage);
+    const route = `${this.configService.get('API_FRONT')}${slug}`;
+    const link = (target: number) => `${route}?limit=${perPage}&page=${target}`;
+    return {
+      items,
+      meta: {
+        itemCount: items.length,
+        totalItems,
+        itemsPerPage: perPage,
+        totalPages,
+        currentPage,
+      },
+      links: {
+        first: link(1),
+        previous: currentPage > 1 ? link(currentPage - 1) : '',
+        next: currentPage < totalPages ? link(currentPage + 1) : '',
+        last: link(totalPages),
+      },
+    };
   }
 
   async getRatingProduct(slug: string, query: QueryFilterRating) {
@@ -116,7 +134,7 @@ export class ProductService {
   async getDescriptionProduct(slug: string) {
     const { descriptions } = await this.productRepository.findOne({
       where: { slug },
-      relations: ['descriptions'],
+      relations: { descriptions: true },
     });
 
     return { descriptionList: descriptions };
