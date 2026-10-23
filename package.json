@@ -20,7 +20,10 @@
     "test:debug": "node --inspect-brk --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "lint:fix": "pnpm lint --fix",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "seed": "ts-node src/seed/index.ts",
+    "db:schema": "ts-node src/database/create-schema.ts",
+    "db:setup": "npm run db:schema && npm run seed"
   },
   "dependencies": {
     "@nestjs/common": "^12.2.0",

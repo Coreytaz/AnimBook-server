@@ -23,6 +23,12 @@ export class BodyProduct {
 
 export class QueryProduct {
   @ApiProperty({
+    required: false,
+    description: 'Publisher slugs separated by underscores',
+  })
+  readonly pub?: string;
+
+  @ApiProperty({
     example: 10,
   })
   readonly limit: string;

@@ -1,7 +1,11 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  ServiceUnavailableException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Any, FindOneOptions, Repository } from 'typeorm';
-import { UsersService } from '../users/users.service';
+import { UserEntity } from '../users/entities/user.entity';
 import { ProductService } from '../product/product.service';
 import { PaymentService } from '../payment/payment.service';
 import { Products, CreateOrderWithUserDto } from './dto/create-order.dto';
@@ -15,7 +19,6 @@ export class OrderService {
     private readonly orderRepository: Repository<OrderEntity>,
     @InjectRepository(OrderItemEntity)
     private readonly orderItemRepository: Repository<OrderItemEntity>,
-    private readonly userService: UsersService,
     private readonly productService: ProductService,
     private readonly paymentService: PaymentService,
   ) {}
@@ -95,30 +98,104 @@ export class OrderService {
   }
 
   async createOrder(dto: CreateOrderWithUserDto) {
-    const user = await this.userService.update(dto.userId, {
-      address: dto.address,
-      apartaments: dto.apartaments,
-      postIndex: dto.postIndex,
-    });
-    const order = this.orderRepository.create({
-      user,
-      address: dto.address,
-      apartaments: dto.apartaments,
-      postIndex: dto.postIndex,
-    });
-    await this.orderRepository.save(order);
+    if (
+      !dto.products?.length ||
+      dto.products.some(({ count }) => !Number.isInteger(count) || count <= 0)
+    ) {
+      throw new BadRequestException('Укажите товары и корректное количество');
+    }
 
-    for (let i = 0; i < dto.products.length; i++) {
-      const element = dto.products[i];
-      await this.createItemOrder(element, order._id);
+    // Resolve products before writing so invalid carts cannot leave empty orders.
+    const products = await Promise.all(
+      dto.products.map(({ productId }) =>
+        this.productService.findOne({ where: { _id: productId } }),
+      ),
+    );
+    // One PostgreSQL statement keeps all writes atomic across database proxies.
+    // Separate BEGIN/INSERT/COMMIT requests can lose their session mid-checkout.
+    const manager = this.orderRepository.manager;
+    const table = (
+      entity: typeof OrderEntity | typeof OrderItemEntity | typeof UserEntity,
+    ) => {
+      const metadata = manager.getRepository(entity).metadata;
+      return [metadata.schema, metadata.tableName]
+        .filter(Boolean)
+        .map((name) => '"' + name.replace(/"/g, '""') + '"')
+        .join('.');
+    };
+    const itemMetadata = this.orderItemRepository.metadata;
+    const relationColumn = (property: string) => {
+      const name = itemMetadata.relations.find(
+        (relation) => relation.propertyName === property,
+      ).joinColumns[0].databaseName;
+      return '"' + name.replace(/"/g, '""') + '"';
+    };
+    const rows: { _id: string }[] = await this.orderRepository
+      .query(
+        `WITH updated_user AS (
+        UPDATE ${table(UserEntity)} SET address = $2, apartaments = $3,
+          "postIndex" = $4, updated_at = CURRENT_TIMESTAMP
+        WHERE id = $1::uuid RETURNING id
+      ), new_order AS (
+        INSERT INTO ${table(OrderEntity)} ("userId", address, apartaments, "postIndex")
+        SELECT id, $2, $3, $4 FROM updated_user RETURNING "_id"
+      ), new_items AS (
+        INSERT INTO ${table(OrderItemEntity)} (${relationColumn('order')}, ${relationColumn('product')}, quantity)
+        SELECT new_order."_id", item."productId"::uuid, item.count
+        FROM new_order CROSS JOIN jsonb_to_recordset($5::jsonb)
+          AS item("productId" text, count integer)
+        RETURNING "_id"
+      ) SELECT "_id" FROM new_order`,
+        [
+          dto.userId,
+          dto.address,
+          dto.apartaments,
+          dto.postIndex,
+          JSON.stringify(
+            dto.products.map(({ count }, index) => ({
+              productId: products[index]._id,
+              count,
+            })),
+          ),
+        ],
+      )
+      .catch((error: unknown) => {
+        const databaseError = error as {
+          code?: string;
+          driverError?: { code?: string };
+        } | null;
+        const code = databaseError?.driverError?.code ?? databaseError?.code;
+        if (
+          code &&
+          [
+            'ECONNRESET',
+            'ECONNREFUSED',
+            'ETIMEDOUT',
+            '57P01',
+            '57P02',
+            '57P03',
+            '08006',
+          ].includes(code)
+        ) {
+          // Do not replay writes: a disconnect during COMMIT has an unknown outcome.
+          throw new ServiceUnavailableException(
+            'Соединение с базой данных прервано. Проверьте список заказов перед повторным оформлением.',
+            { cause: error },
+          );
+        }
+        throw error;
+      });
+
+    const order = rows[0];
+    if (!order) {
+      throw new BadRequestException('Не удалось найти пользователя');
     }
 
     const payment = await this.paymentService.makePayment({
       amount: dto.amount,
       orderId: order._id,
     });
-    order.paymentId = payment.id;
-    await this.orderRepository.save(order);
+    await this.orderRepository.update(order._id, { paymentId: payment.id });
     return payment;
   }
 }

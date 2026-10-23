@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductEntity } from './entities/product.entity';
 import { FindOneOptions, Like, Repository } from 'typeorm';
@@ -40,6 +44,13 @@ export class ProductService {
       .where('category.slug = :slug', { slug })
       .leftJoinAndSelect('product.rating', 'rating')
       .select(['product', 'rating.rating']);
+
+    if (query.pub) {
+      queryBuilder.leftJoin('product.publisher', 'publisher');
+      queryBuilder.andWhere('publisher.slug IN (:...publishers)', {
+        publishers: query.pub.split('_'),
+      });
+    }
 
     if (query.minPrice) {
       queryBuilder.andWhere('product.price >= :minPrice', {
@@ -203,10 +214,7 @@ export class ProductService {
     const product = await this.productRepository.findOne({ ...options });
 
     if (!product) {
-      throw new BadRequestException(
-        'Не удалось найти продукт',
-        'Неверный запрос',
-      );
+      throw new NotFoundException('Не удалось найти продукт');
     }
 
     return product;

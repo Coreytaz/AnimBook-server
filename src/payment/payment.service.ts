@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  BadGatewayException,
+  GatewayTimeoutException,
+  Injectable,
+} from '@nestjs/common';
 import axios from 'axios';
 import { ConfigService } from '@nestjs/config';
 import { MakePaymentDto } from './dto/make-payment.dto';
@@ -12,9 +16,10 @@ export class PaymentService {
       const { data } = await axios({
         method: 'POST',
         url: 'https://api.yookassa.ru/v3/payments',
+        timeout: 15000,
         headers: {
           'Content-Type': 'application/json',
-          'Idempotence-Key': Date.now(),
+          'Idempotence-Key': dto.orderId,
         },
         auth: {
           username: '215073',
@@ -22,7 +27,7 @@ export class PaymentService {
         },
         data: {
           amount: {
-            value: dto.amount,
+            value: dto.amount.toFixed(2),
             currency: 'RUB',
           },
           capture: true,
@@ -38,7 +43,7 @@ export class PaymentService {
 
       return data;
     } catch (error) {
-      throw new ForbiddenException(error);
+      this.handlePaymentError(error);
     }
   }
 
@@ -47,6 +52,7 @@ export class PaymentService {
       const { data } = await axios({
         method: 'GET',
         url: `https://api.yookassa.ru/v3/payments/${paymentId}`,
+        timeout: 15000,
         auth: {
           username: '215073',
           password: 'test_FevXsgz4-yKXptOaLNzloeqKI79o_7oR7j89hqudydg',
@@ -55,7 +61,22 @@ export class PaymentService {
 
       return data;
     } catch (error) {
-      throw new ForbiddenException(error);
+      this.handlePaymentError(error);
     }
+  }
+
+  private handlePaymentError(error: unknown): never {
+    if (
+      axios.isAxiosError(error) &&
+      ['ECONNABORTED', 'ETIMEDOUT'].includes(error.code)
+    ) {
+      throw new GatewayTimeoutException(
+        'Сервис оплаты не ответил. Попробуйте позже.',
+      );
+    }
+    // Axios errors contain circular request objects and authentication data.
+    throw new BadGatewayException(
+      'Не удалось связаться с сервисом оплаты. Попробуйте позже.',
+    );
   }
 }

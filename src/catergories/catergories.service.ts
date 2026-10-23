@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   FindOneOptions,
@@ -87,14 +91,15 @@ export class CatergoriesService {
   }
 
   async findSub(slug: string) {
-    const { name, subcategories } = await this.categoryRepository.findOne({
+    const category = await this.categoryRepository.findOne({
       where: { slug },
       relations: { subcategories: true, products: true },
     });
 
+    if (!category) throw new NotFoundException('Категория не найдена');
     return {
-      categoryName: name || '',
-      subcategories,
+      categoryName: category.name,
+      subcategories: category.subcategories,
     };
   }
 

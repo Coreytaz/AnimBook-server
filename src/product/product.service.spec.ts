@@ -62,6 +62,23 @@ describe('ProductService pagination after TypeORM migration', () => {
     });
   });
 
+  it('filters by all selected publisher slugs', async () => {
+    query.getManyAndCount.mockResolvedValue([[], 0]);
+    await service.getProducts('books', {
+      pub: 'demo-manga-publisher_demo-comics-publisher',
+    } as QueryProduct);
+    expect(query.leftJoin).toHaveBeenCalledWith(
+      'product.publisher',
+      'publisher',
+    );
+    expect(query.andWhere).toHaveBeenCalledWith(
+      'publisher.slug IN (:...publishers)',
+      {
+        publishers: ['demo-manga-publisher', 'demo-comics-publisher'],
+      },
+    );
+  });
+
   it('returns empty items and no adjacent pages for an empty catalog', async () => {
     query.getManyAndCount.mockResolvedValue([[], 0]);
     const result = await service.getProducts('books', {} as QueryProduct);
